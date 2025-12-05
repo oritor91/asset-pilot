@@ -1,0 +1,48 @@
+version: "3"
+
+env:
+  PYTHONPATH: "src"
+
+tasks:
+  install:
+    desc: Install application and development dependencies.
+    cmds:
+      - python -m pip install --upgrade pip
+      - python -m pip install -e .[dev]
+
+  lint:
+    desc: Run Ruff lint checks.
+    cmds:
+      - ruff check src tests
+
+  format:
+    desc: Apply Ruff formatting and autofix lint issues.
+    cmds:
+      - ruff format src tests
+      - ruff check --fix src tests
+
+  typecheck:
+    desc: Run mypy static type checks.
+    cmds:
+      - mypy src
+
+  test:
+    desc: Run pytest suite.
+    cmds:
+      - pytest
+
+  run-local:
+    desc: Start the FastAPI app locally with reload.
+    cmds:
+      - ./scripts/run_local.sh
+
+  sam-build:
+    desc: Build the SAM application artifacts.
+    cmds:
+      - sam build --template-file infra/sam/template.yaml
+
+  sam-deploy:
+    desc: Deploy the SAM application to AWS.
+    cmds:
+      - sam deploy --config-file samconfig.toml --template-file infra/sam/template.yaml
+

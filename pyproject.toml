@@ -1,0 +1,81 @@
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "asset-pilo-template"
+version = "0.1.0"
+description = "Template repository for FastAPI services deployed as AWS Lambda behind API Gateway."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Asset Pilo Team" }
+]
+dependencies = [
+  "boto3>=1.34.0,<2.0.0",
+  "fastapi>=0.115.0,<1.0.0",
+  "mangum>=0.17.0,<1.0.0",
+  "pydantic>=2.7.0,<3.0.0",
+  "pydantic-settings>=2.3.0,<3.0.0",
+  "python-dotenv>=1.0.0,<2.0.0",
+  "uvicorn[standard]>=0.30.0,<1.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "black>=24.8.0,<25.0.0",
+  "httpx>=0.27.0,<1.0.0",
+  "mypy>=1.11.0,<2.0.0",
+  "pytest>=8.3.0,<9.0.0",
+  "pytest-asyncio>=0.23.0,<1.0.0",
+  "ruff>=0.6.0,<1.0.0",
+  "types-boto3-core>=1.34.0,<2.0.0",
+  "types-requests>=2.31.0,<3.0.0"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "B", "UP", "ANN", "C4"]
+ignore = ["ANN101", "ANN401"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["D103"]
+
+[tool.ruff.format]
+indent-style = "space"
+quote-style = "double"
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = [
+  "tests"
+]
+
+[tool.mypy]
+python_version = "3.11"
+disallow_any_unimported = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_ignores = true
+strict_optional = true
+plugins = []
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
+

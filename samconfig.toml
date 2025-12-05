@@ -1,0 +1,12 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "asset-pilo-fastapi"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+s3_prefix = "asset-pilo-fastapi"
+
+[default.deploy.parameters]
+parameter_overrides = "EnvironmentName=local"
+confirm_changeset = true
+
