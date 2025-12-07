@@ -39,10 +39,11 @@ tasks:
   sam-build:
     desc: Build the SAM application artifacts.
     cmds:
-      - sam build --template-file infra/sam/template.yaml
+      - sam build
 
   sam-deploy:
     desc: Deploy the SAM application to AWS.
     cmds:
-      - sam deploy --config-file samconfig.toml --template-file infra/sam/template.yaml
+      - task: sam-build
+      - sam deploy --config-env default --stack-name asset-pilo --resolve-s3 --capabilities CAPABILITY_IAM
 

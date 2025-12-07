@@ -15,5 +15,4 @@ async def get_liveness() -> dict[str, str]:
     Returns:
         dict[str, str]: Payload describing the current liveness state.
     """
-    return {"status": "ok"}
-
+    return {"status": "Healthy"}

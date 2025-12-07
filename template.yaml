@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Asset Pilo FastAPI template deployed as an AWS Lambda behind API Gateway using AWS SAM.
+
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: prod
+    Description: Logical environment name used for tagging and naming resources.
+
+Resources:
+  FastApiHttpApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Description: HTTP API for the Asset Pilo FastAPI template.
+      StageName: Prod
+
+  FastApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${EnvironmentName}-asset-pilo-fastapi"
+      Description: FastAPI application packaged as a Lambda function.
+      CodeUri: ./src
+      Runtime: python3.11
+      MemorySize: 512
+      Timeout: 30
+      Handler: app.main.lambda_handler
+      Architectures:
+        - x86_64
+      Environment:
+        Variables:
+          PROPERTY_TABLE_NAME: !Ref PropertyTable
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref FastApiHttpApi
+            Path: /{proxy+}
+            Method: ANY
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 
+              !Ref PropertyTable
+        - DynamoDBWritePolicy:
+            TableName: 
+              !Ref PropertyTable
+
+  PropertyTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${EnvironmentName}-property"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: property_id
+          AttributeType: S
+        - AttributeName: holding_entity_id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: property_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: holding-entity-id-index
+          KeySchema:
+            - AttributeName: holding_entity_id
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      Tags:
+        - Key: Environment
+          Value: !Ref EnvironmentName
+        - Key: Service
+          Value: AssetPiloFastApi
+
+Outputs:
+  ApiEndpoint:
+    Description: URL of the deployed HTTP API.
+    Value: !Sub "https://${FastApiHttpApi}.execute-api.${AWS::Region}.amazonaws.com/${EnvironmentName}"
+  PropertyTableName:
+    Description: Name of the DynamoDB table storing property records.
+    Value: !Ref PropertyTable
+  PropertyTableArn:
+    Description: ARN of the DynamoDB table storing property records.
+    Value: !GetAtt PropertyTable.Arn
+

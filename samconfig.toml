@@ -7,6 +7,6 @@ capabilities = "CAPABILITY_IAM"
 s3_prefix = "asset-pilo-fastapi"
 
 [default.deploy.parameters]
-parameter_overrides = "EnvironmentName=local"
+parameter_overrides = "EnvironmentName=aws"
 confirm_changeset = true
 
